@@ -22,13 +22,21 @@ export async function getLastDeploy(setLastDeploy) {
       (activity) => activity.type === "DEPLOY_STARTED"
     )
     if (deployStartedActivity) {
-      const createdAt = new Date(
+      const currentTime = new Date()
+      let createdAt = new Date (deployStartedActivity.createdAt)
+      let recentDeploy = true
+      if((currentTime - createdAt)/(60*60*1000) > 1) {
+        recentDeploy = false
+      }
+      createdAt = new Date(
         deployStartedActivity.createdAt
       ).toLocaleString()
-      return createdAt
+      
+      return [createdAt, recentDeploy]
     }
   })
   setLastDeploy(lastDeploy)
+  
 }
 
 export async function getServices(setServices) {

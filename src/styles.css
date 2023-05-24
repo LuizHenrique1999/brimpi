@@ -1,0 +1,93 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #222;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #333;
+  border-radius: 5px;
+  align-items: center; /* Center align h2 contents */
+  color: #fff; /* Text color for dark mode */
+}
+
+.general-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.deployment {
+  color: green;
+}
+
+.deployment.true {
+  color: red;
+}
+
+.services {
+  display: flex;
+  flex-wrap: wrap; /* Add flex-wrap property to allow wrapping of service elements */
+  justify-content: space-around; /* Adjust justify-content to distribute space around service elements */
+  gap: 20px;
+  
+}
+
+.service {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #444;
+  padding: 10px;
+  border-radius: 5px;
+  align-items: center;
+  flex-grow: 1; /* Add flex-grow property to allow services to grow and occupy remaining space */
+  flex-basis: 25%;
+}
+
+.service-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.no-data {
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.service-id {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.service-details .ready {
+  color: red; /* Default color for false (not ready) */
+}
+
+.service-details .ready.true {
+  color: green; /* Color for true (ready) */
+}
+
+.service-details .publish-not-ready-addresses.green {
+  color: green; /* Default color for false (not true) */
+}
+
+.service-details .publish-not-ready-addresses.red {
+  color: red; /* Color for true (true) */
+}
+
+.service-details .strategy {
+  color: red; /* Default color for false (not ready) */
+}
+
+.service-details .strategy.true {
+  color: green; /* Color for true (ready) */
+}
