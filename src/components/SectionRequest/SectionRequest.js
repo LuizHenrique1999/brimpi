@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react"
 import { getLastDeploy, getServices } from "../../services/requestApiCloud"
 import "../../styles.css"
 
-function SectionRequest() {
+function SectionRequest( {projectId, token} ) {
   const [lastDeploy, setLastDeploy] = useState([])
   const [services, setServices] = useState(null)
 
   useEffect(() => {
-    getLastDeploy(setLastDeploy)
-    getServices(setServices)
-  }, [])
+    getLastDeploy(setLastDeploy, token, projectId)
+    getServices(setServices, token, projectId)
+  }, [token, projectId])
 
   return (
     <div className="container">

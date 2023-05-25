@@ -1,20 +1,29 @@
+
+
+
 const API_URL = "https://api.liferay.cloud/projects/"
 // const API_CLUSTER_URL = "https://api.liferay.cloud/clusters/"
 
-const Token =
-  "eyJraWQiOiI1OFY5Z2pXRkU0d3lTQWh6OUxONmw5MzAzUTV3YWRYQW1peVRyOTdBOU9ZIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULmlWUGdsZTJTUnhLS3A2TmZYNlA4bVV4NEF0WXcwdFVWNWVXYmgyUVJQLWcub2FyMzE4c210NEpBeENoZWszNTciLCJpc3MiOiJodHRwczovL2F1dGgubGlmZXJheS5jbG91ZC9vYXV0aDIvZGVmYXVsdCIsImF1ZCI6ImFwaTovL2RlZmF1bHQiLCJpYXQiOjE2ODQ4NjI2MjcsImV4cCI6MTY4NDkxNjYyNywiY2lkIjoiMG9ha2R6djltYXBFeE96OU4zNTYiLCJ1aWQiOiIwMHVsaHI0ZDduOHFoWGVERjM1NyIsInNjcCI6WyJvZmZsaW5lX2FjY2VzcyIsInByb2ZpbGUiLCJvcGVuaWQiXSwiYXV0aF90aW1lIjoxNjg0ODYyNjI3LCJzdWIiOiJyYWZhZWwudWVuQGxpZmVyYXkuY29tIn0.rwNX787Dq7gyuGLGMuiWVBis3C0WxNbL-hMx3NeMP1FUVVIqDuvxYmAKNg2DrjrxH5nQvGjSuhenzcF1FsyhwGFyeg4D0TFk1mPHoLItWpvwV321XK4_vkT532Sx68mD27xlqe98Wl1L_JCs2y-veHfkh8FU7ptznV_VRot5lJzoy-XGbCJHqNvtiYEPXbmkbGuGVv3jNENrU4-Qq2njwlbinueW2gEpBbk1YDwWPgMSrL5QfI_UKez8oi67vAnOgEl0xmQbGX9RW3GNbN3eyGvpLRHAL3jSrhW2ndNIcC8XoeEiIhzGkgxsCttAXtJ4D0Wa7MoGamuVDa5qivysMA"
+// const Token =
+//   "eyJraWQiOiI1OFY5Z2pXRkU0d3lTQWh6OUxONmw5MzAzUTV3YWRYQW1peVRyOTdBOU9ZIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULkNiR2ZuNkg3b1k3b3dibkp0UnBRdzctZ3ZXRDdFQ243WHZSY2VVX09GdVEub2FyMzFkOXpyeldWdEdLa2IzNTciLCJpc3MiOiJodHRwczovL2F1dGgubGlmZXJheS5jbG91ZC9vYXV0aDIvZGVmYXVsdCIsImF1ZCI6ImFwaTovL2RlZmF1bHQiLCJpYXQiOjE2ODQ5NTA2NDMsImV4cCI6MTY4NTAwNDY0MywiY2lkIjoiMG9ha2R6djltYXBFeE96OU4zNTYiLCJ1aWQiOiIwMHVsaHI0ZDduOHFoWGVERjM1NyIsInNjcCI6WyJvZmZsaW5lX2FjY2VzcyIsIm9wZW5pZCIsInByb2ZpbGUiXSwiYXV0aF90aW1lIjoxNjg0OTUwNjQyLCJzdWIiOiJyYWZhZWwudWVuQGxpZmVyYXkuY29tIn0.wnqwaJtGdZ7_rOilWQVIlkDS6AV8pFAs43PCmF5sYR0pc8T3H2UcQTKCM9O0Ocw-ubhh7tTGj1YB9okCtMiJi0DOk_yHmRrSe3xmEzS1jO9eiUKDnkcaZoO-pwIvTzrTQSX1rLMPHdWCNSdTxiULbamzJWm8E8p1JD4SmdkcbfBQJvdJV8PHoB73N09PdeFGt2H20Lx6Iom9mXO1_KUUJScXyGmIy43XT4uLHI8MF4pLpJz6CcqXuZSNkt3X6dXj-mYxgk7Oh5tXQs9Eyeu7c9U2HMQgS6g0oIQNt2UN-Eq6pu59gljujQsWhoNUDS9VnK3CXU5_xtnO0fd6aYOcow"
 
-const headers = {
-  headers: {
-    Authorization: `Bearer ${Token}`,
-  },
-}
+// const headers = {
+//   headers: {
+//     Authorization: `Bearer ${Token}`,
+//   },
+// }
 
 
 
-export async function getLastDeploy(setLastDeploy) {
+export async function getLastDeploy(setLastDeploy, token, projectId) {
+  const headers = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+
   const response = await fetch(
-    `${API_URL}pg-prd/activities/builds-deployments`,
+    `${API_URL}${projectId}/activities/builds-deployments`,
     headers
   )
   const lastDeploy = await response.json().then((activities) => {
@@ -39,8 +48,13 @@ export async function getLastDeploy(setLastDeploy) {
   
 }
 
-export async function getServices(setServices) {
-  const response = await fetch(`${API_URL}pg-prd/services`, headers);
+export async function getServices(setServices, token, projectId) {
+  const headers = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+  const response = await fetch(`${API_URL}${projectId}/services`, headers);
   const responseData = await response.json();
   setServices(responseData);
 }

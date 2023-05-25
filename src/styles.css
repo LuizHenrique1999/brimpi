@@ -13,8 +13,8 @@
   padding: 20px;
   background-color: #333;
   border-radius: 5px;
-  align-items: center; /* Center align h2 contents */
-  color: #fff; /* Text color for dark mode */
+  align-items: center;
+  color: #fff;
 }
 
 .general-info {
@@ -23,20 +23,15 @@
   gap: 10px;
 }
 
-.deployment {
-  color: green;
-}
-
 .deployment.true {
   color: red;
 }
 
 .services {
   display: flex;
-  flex-wrap: wrap; /* Add flex-wrap property to allow wrapping of service elements */
-  justify-content: space-around; /* Adjust justify-content to distribute space around service elements */
+  flex-wrap: wrap;
+  justify-content: space-around;
   gap: 20px;
-  
 }
 
 .service {
@@ -47,7 +42,7 @@
   padding: 10px;
   border-radius: 5px;
   align-items: center;
-  flex-grow: 1; /* Add flex-grow property to allow services to grow and occupy remaining space */
+  flex-grow: 1;
   flex-basis: 25%;
 }
 
@@ -68,26 +63,14 @@
   font-weight: bold;
 }
 
-.service-details .ready {
-  color: red; /* Default color for false (not ready) */
-}
-
 .service-details .ready.true {
-  color: green; /* Color for true (ready) */
-}
-
-.service-details .publish-not-ready-addresses.green {
-  color: green; /* Default color for false (not true) */
+  color: green;
 }
 
 .service-details .publish-not-ready-addresses.red {
-  color: red; /* Color for true (true) */
-}
-
-.service-details .strategy {
-  color: red; /* Default color for false (not ready) */
+  color: red;
 }
 
 .service-details .strategy.true {
-  color: green; /* Color for true (ready) */
+  color: green;
 }
