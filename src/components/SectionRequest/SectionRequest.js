@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { getLastDeploy, getServices } from "../../services/requestApiCloud"
 import "../../styles.css"
 
-function SectionRequest( {projectId, token} ) {
+function SectionRequest({ projectId, token }) {
   const [lastDeploy, setLastDeploy] = useState([])
   const [services, setServices] = useState(null)
 
@@ -11,22 +11,86 @@ function SectionRequest( {projectId, token} ) {
     getServices(setServices, token, projectId)
   }, [token, projectId])
 
+  const openAdminProject = () =>
+    `https://admin.liferay.cloud/projects/${projectId}`
+
+  const getStringUntilSecondDash = (inputString) => {
+    const firstDashIndex = inputString.indexOf("-")
+    const secondDashIndex = inputString.indexOf("-", firstDashIndex + 1)
+
+    if (firstDashIndex !== -1 && secondDashIndex !== -1) {
+      return inputString.substring(0, secondDashIndex)
+    }
+
+    return inputString // Return the original string if the second dash is not found
+  }
+
+  const openGcpIngressTelemetry = () => `https://console.cloud.google.com/kubernetes/ingress/${getStringUntilSecondDash(services[0].cluster)}/${services[0].cluster}/${services[0].projectUid}/ingress/metrics?project=liferaycloud-lxc2`
+
+  
+
   return (
     <div className="container">
       {lastDeploy && services ? (
         <div className="content">
           <h2>General Info</h2>
           <div className="general-info">
-            <div className={`deployment ${lastDeploy[1] ? "true" : ""}`}>Last Deployment: {lastDeploy[0]}</div>
-            <div>Cluster: {services[0].cluster}</div>
-            <div>Namespace: {services[0].projectUid}</div>
-            <div>ProjectId: {services[0].projectId}</div>
+            <div className="info">
+              <div className={`deployment ${lastDeploy[1] ? "true" : ""}`}>
+                Last Deployment: {lastDeploy[0]}
+              </div>
+              <div>Cluster: {services[0].cluster}</div>
+              <div>Namespace: {services[0].projectUid}</div>
+              <div>ProjectId: {services[0].projectId}</div>
+            </div>
+            <div className="links">
+              <div>
+                <a
+                  href={openAdminProject()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="custom-link"
+                >
+                  Liferay Admin
+                </a>
+              </div>
+              <div>
+                <a
+                  href={openGcpIngressTelemetry()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="custom-link"
+                >
+                  GCP Ingress Telemetry
+                </a>
+              </div>
+              <div>
+                <a
+                  href={openAdminProject()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="custom-link"
+                >
+                  Liferay Admin
+                </a>
+              </div>
+              <div>
+                <a
+                  href={openAdminProject()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="custom-link"
+                >
+                  Liferay Admin
+                </a>
+              </div>
+            </div>
           </div>
           <h2>Services</h2>
           <div className="services">
             {services.map((service) => (
               <div key={service.serviceId} className="service">
-                <div className='service-id'>{service.serviceId}</div>
+                <div className="service-id">{service.serviceId}</div>
                 <div className="service-details">
                   <div>
                     <span>Can Autoscale:</span>{" "}
@@ -52,7 +116,11 @@ function SectionRequest( {projectId, token} ) {
                     <span>Publish Not Ready Addresses For Cluster:</span>{" "}
                     {service.publishNotReadyAddressesForCluster.toString()}
                   </div>
-                  <div className={`strategy ${service.strategy.type === 'RollingUpdate' ? "true" : ""}`}>
+                  <div
+                    className={`strategy ${
+                      service.strategy.type === "RollingUpdate" ? "true" : ""
+                    }`}
+                  >
                     <span>Strategy:</span> {service.strategy.type}
                   </div>
                   <div className={`ready ${service.ready ? "true" : ""}`}>
@@ -64,7 +132,7 @@ function SectionRequest( {projectId, token} ) {
           </div>
         </div>
       ) : (
-        <div className="no-data">No data yet</div>
+        <div className="no-data">Loading...</div>
       )}
     </div>
   )

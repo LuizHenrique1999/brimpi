@@ -1,6 +1,3 @@
-
-
-
 const API_URL = "https://api.liferay.cloud/projects/"
 // const API_CLUSTER_URL = "https://api.liferay.cloud/clusters/"
 
@@ -12,8 +9,6 @@ const API_URL = "https://api.liferay.cloud/projects/"
 //     Authorization: `Bearer ${Token}`,
 //   },
 // }
-
-
 
 export async function getLastDeploy(setLastDeploy, token, projectId) {
   const headers = {
@@ -32,20 +27,17 @@ export async function getLastDeploy(setLastDeploy, token, projectId) {
     )
     if (deployStartedActivity) {
       const currentTime = new Date()
-      let createdAt = new Date (deployStartedActivity.createdAt)
+      let createdAt = new Date(deployStartedActivity.createdAt)
       let recentDeploy = true
-      if((currentTime - createdAt)/(60*60*1000) > 1) {
+      if ((currentTime - createdAt) / (60 * 60 * 1000) > 1) {
         recentDeploy = false
       }
-      createdAt = new Date(
-        deployStartedActivity.createdAt
-      ).toLocaleString()
-      
+      createdAt = new Date(deployStartedActivity.createdAt).toLocaleString()
+
       return [createdAt, recentDeploy]
     }
   })
   setLastDeploy(lastDeploy)
-  
 }
 
 export async function getServices(setServices, token, projectId) {
@@ -54,7 +46,14 @@ export async function getServices(setServices, token, projectId) {
       Authorization: `Bearer ${token}`,
     },
   }
-  const response = await fetch(`${API_URL}${projectId}/services`, headers);
-  const responseData = await response.json();
-  setServices(responseData);
+  const response = await fetch(`${API_URL}${projectId}/services`, headers)
+  const responseData = await response.json()
+
+  const response2 = await fetch(`https://api.liferay.cloud/clusters`)
+  const response2Data = await response2.json().then((clusters) => {
+    const projectCluster = clusters.find(
+      (cluster) => cluster.name === responseData.cluster
+    )
+    setServices([...responseData, { gcpProject: projectCluster }])
+  })
 }

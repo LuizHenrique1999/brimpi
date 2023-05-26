@@ -19,12 +19,17 @@
 
 .general-info {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  flex-direction: row;
+  gap: 100px;
 }
 
 .deployment.true {
   color: red;
+}
+
+.custom-link {
+  color: inherit;
+  /* Additional styles as needed */
 }
 
 .services {
@@ -55,12 +60,17 @@
 .no-data {
   text-align: center;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 50px;
+  color: #fff;
 }
 
 .service-id {
   font-size: 20px;
   font-weight: bold;
+}
+
+.service-details .ready {
+  color: red;
 }
 
 .service-details .ready.true {
