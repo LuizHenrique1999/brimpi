@@ -25,8 +25,11 @@ function SectionRequest({ projectId, token }) {
     return inputString // Return the original string if the second dash is not found
   }
 
-  const openGcpIngressTelemetry = () => `https://console.cloud.google.com/kubernetes/ingress/${getStringUntilSecondDash(services[0].cluster)}/${services[0].cluster}/${services[0].projectUid}/ingress/metrics?project=liferaycloud-lxc2`
+  const overviewFilter = (kind) => ( kind === 'deployment' ?  'overview' :  'details' )
+  
 
+  const openGcpIngressTelemetry = () => `https://console.cloud.google.com/kubernetes/ingress/${getStringUntilSecondDash(services[0].cluster)}/${services[0].cluster}/${services[0].projectUid}/ingress/metrics?project=${services[0].gcpProject}`
+  const openGcpServiceTelemetry = (kind, cluster, namespace, serviceId, gcpProject) => `https://console.cloud.google.com/kubernetes/${kind}/${getStringUntilSecondDash(cluster)}/${cluster}/${namespace}/${serviceId}/${overviewFilter(kind)}?project=${gcpProject}`
   
 
   return (
@@ -49,7 +52,7 @@ function SectionRequest({ projectId, token }) {
                   href={openAdminProject()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="custom-link"
+                  className='custom-link'
                 >
                   Liferay Admin
                 </a>
@@ -59,7 +62,7 @@ function SectionRequest({ projectId, token }) {
                   href={openGcpIngressTelemetry()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="custom-link"
+                  className='custom-link'
                 >
                   GCP Ingress Telemetry
                 </a>
@@ -69,7 +72,7 @@ function SectionRequest({ projectId, token }) {
                   href={openAdminProject()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="custom-link"
+                  className='custom-link'
                 >
                   Liferay Admin
                 </a>
@@ -79,7 +82,7 @@ function SectionRequest({ projectId, token }) {
                   href={openAdminProject()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="custom-link"
+                  className='custom-link'
                 >
                   Liferay Admin
                 </a>
@@ -92,6 +95,15 @@ function SectionRequest({ projectId, token }) {
               <div key={service.serviceId} className="service">
                 <div className="service-id">{service.serviceId}</div>
                 <div className="service-details">
+                  <div className="service-links">
+                    <div><a
+                  href={openGcpServiceTelemetry(service.kind, service.cluster, service.projectUid, service.serviceId, service.gcpProject)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className='custom-link'
+                >GCP Telemetry</a></div>
+                    <div>GCP Logs</div>
+                  </div>
                   <div>
                     <span>Can Autoscale:</span>{" "}
                     {service.canAutoscale.toString()}

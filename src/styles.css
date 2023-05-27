@@ -57,6 +57,12 @@
   gap: 5px;
 }
 
+.service-links {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
 .no-data {
   text-align: center;
   font-weight: bold;
@@ -78,6 +84,10 @@
 }
 
 .service-details .publish-not-ready-addresses.red {
+  color: red;
+}
+
+.service-details .strategy {
   color: red;
 }
 

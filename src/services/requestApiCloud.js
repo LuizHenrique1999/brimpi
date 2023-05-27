@@ -50,10 +50,25 @@ export async function getServices(setServices, token, projectId) {
   const responseData = await response.json()
 
   const response2 = await fetch(`https://api.liferay.cloud/clusters`)
-  const response2Data = await response2.json().then((clusters) => {
-    const projectCluster = clusters.find(
-      (cluster) => cluster.name === responseData.cluster
-    )
-    setServices([...responseData, { gcpProject: projectCluster }])
+  const clusters = await response2.json()
+  const projectCluster = clusters.find(
+    (cluster) => cluster.name === responseData[0].cluster
+  )
+  responseData.forEach((elem) => {
+    elem.gcpProject = projectCluster.cloudProjectId
+    elem.kind = elem.kind.toLowerCase()
   })
+
+  responseData.sort((a, b) => {
+    const serviceIdA = a.serviceId.toLowerCase();
+    const serviceIdB = b.serviceId.toLowerCase();
+    if (serviceIdA < serviceIdB) {
+      return -1;
+    }
+    if (serviceIdA > serviceIdB) {
+      return 1;
+    }
+    return 0;
+  });
+  setServices(responseData)
 }
