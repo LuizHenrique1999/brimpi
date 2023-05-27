@@ -1,3 +1,9 @@
+.external-links {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .container {
   display: flex;
   justify-content: center;
@@ -7,6 +13,7 @@
 }
 
 .content {
+  position:relative;
   display: flex;
   flex-direction: column;
   gap: 20px;

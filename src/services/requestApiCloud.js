@@ -1,43 +1,51 @@
 const API_URL = "https://api.liferay.cloud/projects/"
-// const API_CLUSTER_URL = "https://api.liferay.cloud/clusters/"
 
-// const Token =
-//   "eyJraWQiOiI1OFY5Z2pXRkU0d3lTQWh6OUxONmw5MzAzUTV3YWRYQW1peVRyOTdBOU9ZIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULkNiR2ZuNkg3b1k3b3dibkp0UnBRdzctZ3ZXRDdFQ243WHZSY2VVX09GdVEub2FyMzFkOXpyeldWdEdLa2IzNTciLCJpc3MiOiJodHRwczovL2F1dGgubGlmZXJheS5jbG91ZC9vYXV0aDIvZGVmYXVsdCIsImF1ZCI6ImFwaTovL2RlZmF1bHQiLCJpYXQiOjE2ODQ5NTA2NDMsImV4cCI6MTY4NTAwNDY0MywiY2lkIjoiMG9ha2R6djltYXBFeE96OU4zNTYiLCJ1aWQiOiIwMHVsaHI0ZDduOHFoWGVERjM1NyIsInNjcCI6WyJvZmZsaW5lX2FjY2VzcyIsIm9wZW5pZCIsInByb2ZpbGUiXSwiYXV0aF90aW1lIjoxNjg0OTUwNjQyLCJzdWIiOiJyYWZhZWwudWVuQGxpZmVyYXkuY29tIn0.wnqwaJtGdZ7_rOilWQVIlkDS6AV8pFAs43PCmF5sYR0pc8T3H2UcQTKCM9O0Ocw-ubhh7tTGj1YB9okCtMiJi0DOk_yHmRrSe3xmEzS1jO9eiUKDnkcaZoO-pwIvTzrTQSX1rLMPHdWCNSdTxiULbamzJWm8E8p1JD4SmdkcbfBQJvdJV8PHoB73N09PdeFGt2H20Lx6Iom9mXO1_KUUJScXyGmIy43XT4uLHI8MF4pLpJz6CcqXuZSNkt3X6dXj-mYxgk7Oh5tXQs9Eyeu7c9U2HMQgS6g0oIQNt2UN-Eq6pu59gljujQsWhoNUDS9VnK3CXU5_xtnO0fd6aYOcow"
-
-// const headers = {
-//   headers: {
-//     Authorization: `Bearer ${Token}`,
-//   },
-// }
-
-export async function getLastDeploy(setLastDeploy, token, projectId) {
+export async function getLastActivity(setLastActivity, token, projectId) {
+  const dateCheckAndConvert = (activityDate, type) => {
+    const currentTime = new Date()
+    let date = new Date(activityDate)
+    let recent = true
+    if ((currentTime - date) / (60 * 60 * 1000) > 1) {
+      recent = false
+    }
+    date = new Date(activityDate).toLocaleString()
+    return { date: date, recent: recent, name: type }
+  }
   const headers = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   }
+  const lastActivity = []
+  try {
+    const response = await fetch(`${API_URL}${projectId}/activities/builds-deployments/`, headers)
+    if (!response.ok) {
+      throw new Error("Failed to fetch activities from the API.")
+    }
+    const activities = await response.json()
 
-  const response = await fetch(
-    `${API_URL}${projectId}/activities/builds-deployments`,
-    headers
-  )
-  const lastDeploy = await response.json().then((activities) => {
-    const deployStartedActivity = activities.find(
+    const lastDeploy = activities.find(
       (activity) => activity.type === "DEPLOY_STARTED"
     )
-    if (deployStartedActivity) {
-      const currentTime = new Date()
-      let createdAt = new Date(deployStartedActivity.createdAt)
-      let recentDeploy = true
-      if ((currentTime - createdAt) / (60 * 60 * 1000) > 1) {
-        recentDeploy = false
-      }
-      createdAt = new Date(deployStartedActivity.createdAt).toLocaleString()
-
-      return [createdAt, recentDeploy]
+    if (lastDeploy) {
+      lastActivity.push(dateCheckAndConvert(lastDeploy.createdAt, "Last Deployment"))
     }
-  })
-  setLastDeploy(lastDeploy)
+    // lastRestart não funciona (mesmo usando ${API_URL}${projectId}/activities/) porque só puxa restart completo (e não de serviço)
+
+    // const lastRestart = activities.find(
+    //   (activity) => activity.type === "SERVICE_RESTARTED"
+    // )
+    // if (lastRestart) {
+    //   lastActivity.push(
+    //     dateCheckAndConvert(lastRestart.createdAt, "Last Restart")
+    //   )
+    // }
+
+    setLastActivity(lastActivity)
+  } catch (error) {
+    console.error("Error occurred while fetching activities:", error)
+    // Handle the error as needed, e.g., display an error message to the user.
+  }
 }
 
 export async function getServices(setServices, token, projectId) {
@@ -60,15 +68,15 @@ export async function getServices(setServices, token, projectId) {
   })
 
   responseData.sort((a, b) => {
-    const serviceIdA = a.serviceId.toLowerCase();
-    const serviceIdB = b.serviceId.toLowerCase();
+    const serviceIdA = a.serviceId.toLowerCase()
+    const serviceIdB = b.serviceId.toLowerCase()
     if (serviceIdA < serviceIdB) {
-      return -1;
+      return -1
     }
     if (serviceIdA > serviceIdB) {
-      return 1;
+      return 1
     }
-    return 0;
-  });
+    return 0
+  })
   setServices(responseData)
 }

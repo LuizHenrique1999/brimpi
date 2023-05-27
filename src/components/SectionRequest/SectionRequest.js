@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react"
-import { getLastDeploy, getServices } from "../../services/requestApiCloud"
+import { getLastActivity, getServices } from "../../services/requestApiCloud"
 import "../../styles.css"
 
 function SectionRequest({ projectId, token }) {
-  const [lastDeploy, setLastDeploy] = useState([])
+  const [lastActivity, setLastActivity] = useState([])
   const [services, setServices] = useState(null)
 
   useEffect(() => {
-    getLastDeploy(setLastDeploy, token, projectId)
+    getLastActivity(setLastActivity, token, projectId)
     getServices(setServices, token, projectId)
   }, [token, projectId])
 
@@ -25,123 +25,197 @@ function SectionRequest({ projectId, token }) {
     return inputString // Return the original string if the second dash is not found
   }
 
-  const overviewFilter = (kind) => ( kind === 'deployment' ?  'overview' :  'details' )
-  
+  const overviewFilter = (kind) =>
+    kind === "deployment" ? "overview" : "details"
 
-  const openGcpIngressTelemetry = () => `https://console.cloud.google.com/kubernetes/ingress/${getStringUntilSecondDash(services[0].cluster)}/${services[0].cluster}/${services[0].projectUid}/ingress/metrics?project=${services[0].gcpProject}`
-  const openGcpServiceTelemetry = (kind, cluster, namespace, serviceId, gcpProject) => `https://console.cloud.google.com/kubernetes/${kind}/${getStringUntilSecondDash(cluster)}/${cluster}/${namespace}/${serviceId}/${overviewFilter(kind)}?project=${gcpProject}`
-  
+  const openGcpIngressTelemetry = () =>
+    `https://console.cloud.google.com/kubernetes/ingress/${getStringUntilSecondDash(
+      services[0].cluster
+    )}/${services[0].cluster}/${
+      services[0].projectUid
+    }/ingress/metrics?project=${services[0].gcpProject}`
+  const openGcpServiceTelemetry = (
+    kind,
+    cluster,
+    namespace,
+    serviceId,
+    gcpProject
+  ) =>
+    `https://console.cloud.google.com/kubernetes/${kind}/${getStringUntilSecondDash(
+      cluster
+    )}/${cluster}/${namespace}/${serviceId}/${overviewFilter(
+      kind
+    )}?project=${gcpProject}`
 
   return (
     <div className="container">
-      {lastDeploy && services ? (
+      {lastActivity && services ? (
         <div className="content">
-          <h2>General Info</h2>
-          <div className="general-info">
-            <div className="info">
-              <div className={`deployment ${lastDeploy[1] ? "true" : ""}`}>
-                Last Deployment: {lastDeploy[0]}
-              </div>
-              <div>Cluster: {services[0].cluster}</div>
-              <div>Namespace: {services[0].projectUid}</div>
-              <div>ProjectId: {services[0].projectId}</div>
-            </div>
-            <div className="links">
+          <>
+            <div className="external-links">
               <div>
                 <a
-                  href={openAdminProject()}
+                  href="https://webserver-brim-prd.lfr.cloud/web/brim-tool"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className='custom-link'
+                  className="custom-link"
                 >
-                  Liferay Admin
+                  Brim Tool
                 </a>
               </div>
               <div>
                 <a
-                  href={openGcpIngressTelemetry()}
+                  href="https://liferaycloud.app.opsgenie.com/alert/list"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className='custom-link'
+                  className="custom-link"
                 >
-                  GCP Ingress Telemetry
+                  Opsgenie
                 </a>
               </div>
               <div>
                 <a
-                  href={openAdminProject()}
+                  href="https://liferay.atlassian.net/wiki/spaces/DSOH/pages/1357284918/LXC+Self-Managed+Critical+Incident+Management+Playbook"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className='custom-link'
+                  className="custom-link"
                 >
-                  Liferay Admin
+                  IM Playbook
                 </a>
               </div>
               <div>
                 <a
-                  href={openAdminProject()}
+                  href="https://issues.liferay.com/secure/RapidBoard.jspa?rapidView=6523&quickFilter=38530"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className='custom-link'
+                  className="custom-link"
                 >
-                  Liferay Admin
+                  BRIM Jira Board
                 </a>
               </div>
             </div>
-          </div>
-          <h2>Services</h2>
-          <div className="services">
-            {services.map((service) => (
-              <div key={service.serviceId} className="service">
-                <div className="service-id">{service.serviceId}</div>
-                <div className="service-details">
-                  <div className="service-links">
-                    <div><a
-                  href={openGcpServiceTelemetry(service.kind, service.cluster, service.projectUid, service.serviceId, service.gcpProject)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className='custom-link'
-                >GCP Telemetry</a></div>
-                    <div>GCP Logs</div>
-                  </div>
-                  <div>
-                    <span>Can Autoscale:</span>{" "}
-                    {service.canAutoscale.toString()}
-                  </div>
-                  <div>
-                    <span>Current Pod:</span> {service.scale.toString()}
-                  </div>
-                  <div>
-                    <span>Max Pod Autoscale:</span>{" "}
-                    {service.autoscale.maxInstances.toString()}
-                  </div>
-                  <div
-                    className={`publish-not-ready-addresses ${
-                      service.serviceId === "liferay" ||
-                      service.serviceId === "webserver"
-                        ? service.publishNotReadyAddressesForCluster
-                          ? "red"
-                          : "green"
-                        : ""
-                    }`}
+            <h2>General Info</h2>
+            <div className="general-info">
+              <div className="info">
+                <div
+                  className={`deployment ${
+                    lastActivity[0].recent ? "true" : ""
+                  }`}
+                >
+                  {lastActivity[0].name}: {lastActivity[0].date}
+                </div>
+
+                <div>Cluster: {services[0].cluster}</div>
+                <div>Namespace: {services[0].projectUid}</div>
+                <div>ProjectId: {services[0].projectId}</div>
+              </div>
+              <div className="links">
+                <div>
+                  <a
+                    href={openAdminProject()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="custom-link"
                   >
-                    <span>Publish Not Ready Addresses For Cluster:</span>{" "}
-                    {service.publishNotReadyAddressesForCluster.toString()}
-                  </div>
-                  <div
-                    className={`strategy ${
-                      service.strategy.type === "RollingUpdate" ? "true" : ""
-                    }`}
+                    Liferay Admin
+                  </a>
+                </div>
+                <div>
+                  <a
+                    href={openGcpIngressTelemetry()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="custom-link"
                   >
-                    <span>Strategy:</span> {service.strategy.type}
-                  </div>
-                  <div className={`ready ${service.ready ? "true" : ""}`}>
-                    <span>Ready:</span> {service.ready.toString()}
-                  </div>
+                    GCP Ingress Telemetry
+                  </a>
+                </div>
+                <div>
+                  <a
+                    href={openAdminProject()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="custom-link"
+                  >
+                    Liferay Admin
+                  </a>
+                </div>
+                <div>
+                  <a
+                    href={openAdminProject()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="custom-link"
+                  >
+                    Liferay Admin
+                  </a>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+            <h2>Services</h2>
+            <div className="services">
+              {services.map((service) => (
+                <div key={service.serviceId} className="service">
+                  <div className="service-id">{service.serviceId}</div>
+                  <div className="service-details">
+                    <div className="service-links">
+                      <div>
+                        <a
+                          href={openGcpServiceTelemetry(
+                            service.kind,
+                            service.cluster,
+                            service.projectUid,
+                            service.serviceId,
+                            service.gcpProject
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="custom-link"
+                        >
+                          GCP Telemetry
+                        </a>
+                      </div>
+                      <div>GCP Logs</div>
+                    </div>
+                    <div>
+                      <span>Can Autoscale:</span>{" "}
+                      {service.canAutoscale.toString()}
+                    </div>
+                    <div>
+                      <span>Current Pod:</span> {service.scale.toString()}
+                    </div>
+                    <div>
+                      <span>Max Pod Autoscale:</span>{" "}
+                      {service.autoscale.maxInstances.toString()}
+                    </div>
+                    <div
+                      className={`publish-not-ready-addresses ${
+                        service.serviceId === "liferay" ||
+                        service.serviceId === "webserver"
+                          ? service.publishNotReadyAddressesForCluster
+                            ? "red"
+                            : "green"
+                          : ""
+                      }`}
+                    >
+                      <span>Publish Not Ready Addresses For Cluster:</span>{" "}
+                      {service.publishNotReadyAddressesForCluster.toString()}
+                    </div>
+                    <div
+                      className={`strategy ${
+                        service.strategy.type === "RollingUpdate" ? "true" : ""
+                      }`}
+                    >
+                      <span>Strategy:</span> {service.strategy.type}
+                    </div>
+                    <div className={`ready ${service.ready ? "true" : ""}`}>
+                      <span>Ready:</span> {service.ready.toString()}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         </div>
       ) : (
         <div className="no-data">Loading...</div>
