@@ -39,6 +39,10 @@
   /* Additional styles as needed */
 }
 
+.custom-link:hover {
+  color: blue;
+}
+
 .services {
   display: flex;
   flex-wrap: wrap;
