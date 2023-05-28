@@ -35,7 +35,7 @@ export async function getLastActivity(setLastActivity, token, projectId) {
         dateCheckAndConvert(lastDeploy.createdAt, "Last Deployment")
       )
     }
-    console.log(lastActivity)
+
     setLastActivity(lastActivity)
   } catch (error) {
     console.error("Error occurred while fetching activities:", error)

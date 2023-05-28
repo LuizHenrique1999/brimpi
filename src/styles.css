@@ -13,7 +13,7 @@
 }
 
 .content {
-  position:relative;
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -81,6 +81,11 @@
   font-size: 20px;
   font-weight: bold;
 }
+
+.service-id:not(.true) {
+  color: red;
+}
+
 
 .service-details .ready {
   color: red;
