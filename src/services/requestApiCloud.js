@@ -18,7 +18,10 @@ export async function getLastActivity(setLastActivity, token, projectId) {
   }
   const lastActivity = []
   try {
-    const response = await fetch(`${API_URL}${projectId}/activities/builds-deployments/`, headers)
+    const response = await fetch(
+      `${API_URL}${projectId}/activities/builds-deployments/`,
+      headers
+    )
     if (!response.ok) {
       throw new Error("Failed to fetch activities from the API.")
     }
@@ -28,25 +31,27 @@ export async function getLastActivity(setLastActivity, token, projectId) {
       (activity) => activity.type === "DEPLOY_STARTED"
     )
     if (lastDeploy) {
-      lastActivity.push(dateCheckAndConvert(lastDeploy.createdAt, "Last Deployment"))
+      lastActivity.push(
+        dateCheckAndConvert(lastDeploy.createdAt, "Last Deployment")
+      )
     }
-    // lastRestart não funciona (mesmo usando ${API_URL}${projectId}/activities/) porque só puxa restart completo (e não de serviço)
-
-    // const lastRestart = activities.find(
-    //   (activity) => activity.type === "SERVICE_RESTARTED"
-    // )
-    // if (lastRestart) {
-    //   lastActivity.push(
-    //     dateCheckAndConvert(lastRestart.createdAt, "Last Restart")
-    //   )
-    // }
-
+    console.log(lastActivity)
     setLastActivity(lastActivity)
   } catch (error) {
     console.error("Error occurred while fetching activities:", error)
     // Handle the error as needed, e.g., display an error message to the user.
   }
 }
+// lastRestart não funciona (mesmo usando ${API_URL}${projectId}/activities/) porque só puxa restart completo (e não de serviço)
+
+// const lastRestart = activities.find(
+//   (activity) => activity.type === "SERVICE_RESTARTED"
+// )
+// if (lastRestart) {
+//   lastActivity.push(
+//     dateCheckAndConvert(lastRestart.createdAt, "Last Restart")
+//   )
+// }
 
 export async function getServices(setServices, token, projectId) {
   const headers = {

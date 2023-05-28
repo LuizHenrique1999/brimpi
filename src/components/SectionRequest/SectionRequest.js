@@ -11,8 +11,22 @@ function SectionRequest({ projectId, token }) {
     getServices(setServices, token, projectId)
   }, [token, projectId])
 
+  const openGcpClusterDetails = () => `https://console.cloud.google.com/kubernetes/clusters/details/${getStringUntilSecondDash(
+    services[0].cluster
+  )}/${services[0].cluster}/?project=${services[0].gcpProject}`
+
+
+  //https://console.cloud.google.com/kubernetes/clusters/details/us-central1/us-central1-c1?project=liferaycloud
+
   const openAdminProject = () =>
     `https://admin.liferay.cloud/projects/${projectId}`
+
+  const openAdminService = (projectId, serviceId) =>
+    `https://admin.liferay.cloud/projects/${projectId}/services/${serviceId}`
+
+  const openConsoleProject = () => `https://console.liferay.cloud/projects/${projectId}/services`
+
+  const openConsoleActivities = () => `https://console.liferay.cloud/projects/${projectId}/activities`
 
   const getStringUntilSecondDash = (inputString) => {
     const firstDashIndex = inputString.indexOf("-")
@@ -101,11 +115,21 @@ function SectionRequest({ projectId, token }) {
                   className={`deployment ${
                     lastActivity[0].recent ? "true" : ""
                   }`}
-                >
-                  {lastActivity[0].name}: {lastActivity[0].date}
+                ><a
+                href={openConsoleActivities()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="custom-link"
+              >
+                  {lastActivity[0].name}</a>: {lastActivity[0].date}
                 </div>
 
-                <div>Cluster: {services[0].cluster}</div>
+                <div><a
+                    href={openGcpClusterDetails()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="custom-link"
+                  >Cluster</a>: {services[0].cluster}</div>
                 <div>Namespace: {services[0].projectUid}</div>
                 <div>ProjectId: {services[0].projectId}</div>
               </div>
@@ -178,15 +202,27 @@ function SectionRequest({ projectId, token }) {
                       <div>GCP Logs</div>
                     </div>
                     <div>
-                      <span>Can Autoscale:</span>{" "}
+                      <a
+                        href={openAdminService(
+                          service.projectId,
+                          service.serviceId
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="custom-link"
+                      >
+                        <span>Can Autoscale</span>
+                      </a>:{" "}
                       {service.canAutoscale.toString()}
                     </div>
                     <div>
-                      <span>Current Pod:</span> {service.scale.toString()}
-                    </div>
-                    <div>
-                      <span>Max Pod Autoscale:</span>{" "}
-                      {service.autoscale.maxInstances.toString()}
+                    <a
+                        href={openConsoleProject(
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="custom-link"
+                      ><span>Current Pod</span></a>: {service.scale.toString()}
                     </div>
                     <div
                       className={`publish-not-ready-addresses ${
@@ -198,7 +234,15 @@ function SectionRequest({ projectId, token }) {
                           : ""
                       }`}
                     >
-                      <span>Publish Not Ready Addresses For Cluster:</span>{" "}
+                       <a
+                        href={openAdminService(
+                          service.projectId,
+                          service.serviceId
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="custom-link"
+                      ><span>Publish Not Ready Addresses For Cluster</span></a>:{" "}
                       {service.publishNotReadyAddressesForCluster.toString()}
                     </div>
                     <div
@@ -209,7 +253,13 @@ function SectionRequest({ projectId, token }) {
                       <span>Strategy:</span> {service.strategy.type}
                     </div>
                     <div className={`ready ${service.ready ? "true" : ""}`}>
-                      <span>Ready:</span> {service.ready.toString()}
+                    <a
+                        href={openConsoleProject(
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="custom-link"
+                      ><span>Ready</span></a>: {service.ready.toString()}
                     </div>
                   </div>
                 </div>
